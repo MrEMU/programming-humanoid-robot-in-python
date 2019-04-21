@@ -21,8 +21,13 @@ class MyAgent(SparkAgent):
     def think(self, perception):
         action = super(MyAgent, self).think(perception)
         # YOUR CODE HERE
-        action.stiffness["lae1"] = 0
-        action.speed["he1"] = 0.1
+        action.stiffness["LShoulderPitch"] = 0
+        action.speed["HeadYaw"] = 0.1
+        
+        temperature = perception.joint_temperature["HeadYaw"]
+        angle = perception.joint["HeadYaw"]
+
+        print('HeadYaw angle: ' + str(angle) + ' temperature: ' + str(temperature))
 
         return action
 
