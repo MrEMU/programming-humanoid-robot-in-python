@@ -53,7 +53,30 @@ class PIDController(object):
         @return control signal
         '''
         # YOUR CODE HERE
-
+        
+        # getting delay and error
+        delay = len(self.y) - 1
+        diff = 0
+        for i in range(delay):
+            if self.y[-i] != 0 and self.y[-(i+1)] != 0:
+                diff += self.y[-i] - self.y[-(i+1)]
+        error = target - sensor - (diff/(delay-self.y.count(0))) * delay
+        
+        # computing the diffrent terms
+        term1 = (self.Kp + self.Ki * self.dt + self.Kd / self.dt) * error
+        term2 = (self.Kp + 2 * self.Kd / self.dt) * self.e1
+        term3 = self.Kd / self.dt * self.e2
+        
+        # appending the newest prediction
+        self.y.append(sensor + self.u * self.dt)
+            
+        # computing u
+        self.u = self.u + term1 - term2 + term3
+        
+        # setting last two errors for next time step
+        self.e2 = self.e1.copy()
+        self.e1 = error.copy()
+        
         return self.u
 
 
