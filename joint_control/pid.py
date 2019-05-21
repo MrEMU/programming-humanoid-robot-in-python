@@ -34,10 +34,10 @@ class PIDController(object):
         self.e1 = np.zeros(size)
         self.e2 = np.zeros(size)
         # ADJUST PARAMETERS BELOW
-        delay = 0
-        self.Kp = 0
-        self.Ki = 0
-        self.Kd = 0
+        delay = 5
+        self.Kp = 15
+        self.Ki = 0.8
+        self.Kd = 0.2
         self.y = deque(np.zeros(size), maxlen=delay + 1)
 
     def set_delay(self, delay):
@@ -54,13 +54,25 @@ class PIDController(object):
         '''
         # YOUR CODE HERE
         
-        # getting delay and error
-        delay = len(self.y) - 1
+        def isZero(x):
+            if type(x) is int:
+                return x == 0
+            return 0 == 1
+        
+        # getting count of elements in y and error
+        delay = len(self.y)-1
         diff = 0
-        for i in range(delay):
-            if self.y[-i] != 0 and self.y[-(i+1)] != 0:
+        
+        if delay == 0:
+            error = target - sensor
+        elif self.y.count(isZero) == (delay+1):
+            error = target - sensor
+        elif self.y.count(isZero) > 0:
+            error = target - sensor - self.u * self.dt
+        else: 
+            for i in range(1, delay):
                 diff += self.y[-i] - self.y[-(i+1)]
-        error = target - sensor - (diff/(delay-self.y.count(0))) * delay
+            error = target - sensor - diff/delay * delay
         
         # computing the diffrent terms
         term1 = (self.Kp + self.Ki * self.dt + self.Kd / self.dt) * error
@@ -68,7 +80,8 @@ class PIDController(object):
         term3 = self.Kd / self.dt * self.e2
         
         # appending the newest prediction
-        self.y.append(sensor + self.u * self.dt)
+        if delay != 0:
+            self.y.append(sensor + self.u * self.dt)
             
         # computing u
         self.u = self.u + term1 - term2 + term3
