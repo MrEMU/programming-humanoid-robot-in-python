@@ -35,14 +35,14 @@ class PIDController(object):
         self.e2 = np.zeros(size)
         # ADJUST PARAMETERS BELOW
         delay = 5
-        self.Kp = 15
-        self.Ki = 0.8
-        self.Kd = 0.2
+        self.Kp = 5
+        self.Ki = 0.6
+        self.Kd = 0.1
         self.y = deque(np.zeros(size), maxlen=delay + 1)
 
     def set_delay(self, delay):
         '''
-        @param delay: delay in number of steps
+        @param delay: delay in number of ste
         '''
         self.y = deque(self.y, delay + 1)
 
@@ -54,21 +54,12 @@ class PIDController(object):
         '''
         # YOUR CODE HERE
         
-        def isZero(x):
-            if type(x) is int:
-                return x == 0
-            return 0 == 1
-        
         # getting count of elements in y and error
         delay = len(self.y)-1
         diff = 0
         
         if delay == 0:
             error = target - sensor
-        elif self.y.count(isZero) == (delay+1):
-            error = target - sensor
-        elif self.y.count(isZero) > 0:
-            error = target - sensor - self.u * self.dt
         else: 
             for i in range(1, delay):
                 diff += self.y[-i] - self.y[-(i+1)]
