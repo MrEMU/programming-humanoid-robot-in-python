@@ -67,9 +67,11 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         
         names = [effector_name]
         times = [[1.0]]*len(self.chains[effector_name])
-        keys = [joint_angles]
+        keys = []
+        for i in range(len(joint_angles)):
+            keys.append([joint_angles[i], [0, 0.0, 0.0]])
         
-        self.keyframes = (names, times, keys)  # the result joint angles have to fill in
+        self.keyframes = (names, times, [keys])  # the result joint angles have to fill in
         
 
 if __name__ == '__main__':
