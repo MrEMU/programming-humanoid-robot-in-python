@@ -21,8 +21,7 @@
 
 
 from pid import PIDAgent
-from keyframes import hello
-from keyframes import rightBellyToStand
+from keyframes import rightBackToStand, hello
 
 
 class AngleInterpolationAgent(PIDAgent):
@@ -84,10 +83,11 @@ class AngleInterpolationAgent(PIDAgent):
             #Computing the Beziere Point for current time
             output = (1-t)**3*leftpoint + 3*(1-t)**2*t*lefthandle + 3*(1-t)*t**2*righthandle + t**3*rightpoint
             target_joints[names[i]] = output
+        #self.keyframes = ([], [], [])
         return target_joints
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
     #agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
-    agent.keyframes = rightBellyToStand()
+    agent.keyframes = hello()
     agent.run()
